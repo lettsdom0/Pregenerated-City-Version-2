@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// A Regular Camera Follow script that allows the camera to follow the player smoothly
+/// </summary>
 public class PlayerFollow : MonoBehaviour
 {
     public Transform PlayerTransform;
@@ -10,15 +12,14 @@ public class PlayerFollow : MonoBehaviour
 
     [Range(0.01f, 1.0f)]
     
-    public float SmoothFactor = 0.5f;
+    protected float SmoothFactor = 0.5f;
 
-    public bool LookAtPlayer = true;
+    protected bool LookAtPlayer = true;
 
-    private bool RotateAroundPlayer = false;
+    protected bool RotateAroundPlayer = false;
 
-    public float RotationSpeed = 5.0f;
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]protected float RotationSpeed = 5.0f;
+    private void Awake()
     {
         if (PlayerTransform == null)
         {
@@ -27,13 +28,10 @@ public class PlayerFollow : MonoBehaviour
         _cameraOffset = transform.position - PlayerTransform.position;
     }
 
-    void Update()
-    {
-        toggleRotate();
-    }
     // LateUpdate is called after update
     void LateUpdate()
     {
+        toggleRotate();
         if (RotateAroundPlayer)
         {
             Quaternion camTurnAngle =
@@ -47,15 +45,28 @@ public class PlayerFollow : MonoBehaviour
         if (LookAtPlayer || RotateAroundPlayer)
             transform.LookAt(PlayerTransform);
     }
-    public void toggleRotate()
+    /// <summary>
+    /// <para>Plain and simple, the function allows the player to toggle camera rotation.</para>
+    /// Simply put, function checks if the player has pressed C or not before toggling rotation on(if RotateAroundPlayer false) or off(if RotateAroundPlayer true).
+    /// </summary>
+    internal void toggleRotate()
     {
-        if (Input.GetKeyDown(KeyCode.C) && RotateAroundPlayer == true)
+        bool CDown = Input.GetKeyDown(KeyCode.C);
+        switch (CDown)
         {
-            RotateAroundPlayer = false;
-        }
-        else if (Input.GetKeyDown(KeyCode.C) && RotateAroundPlayer == false)
-        {
-            RotateAroundPlayer = true;
+            case false:
+                break;
+            case true:
+                switch (RotateAroundPlayer)
+                {
+                    case true:
+                        RotateAroundPlayer = false;
+                        break;
+                    case false:
+                        RotateAroundPlayer = true;
+                        break;
+                }
+                break;
         }
     }
 }
